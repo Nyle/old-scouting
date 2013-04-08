@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Match</title>
+    <link rel="stylesheet" href="${request.static_url('scouting:static/scouting.css')}?31"
+        type="text/css" media="screen" charset="utf-8">
+</head>
+<body>
+    <div id="page">
+        <header>
+            <div id="location">
+                <a href="${request.route_url('view_home')}" class="nav">Home</a> > <a class="nav">Edit Match</a>
+            </div>
+            <div id="greeting">
+                <span tal:condition="logged_in">
+                    Welcome, ${request.user.name} the
+                    <span tal:switch="request.user.permission">
+                        <span tal:case="'lead_scout'">lead scout</span>
+                        <span tal:case="'scout'">scout</span>
+                        <span tal:case="'unapproved'">unapproved</span>
+                    </span>
+                </span>
+            </div>
+        </header>
+        <nav>
+            <div class="title">
+                <h1>Actions</h1>
+            </div>
+            <span tal:condition="logged_in">
+                <a href="${request.route_url('logout')}" class="manage">
+                    Logout
+                </a><br>
+                <a href="${request.route_url('reset_password')}" class="manage">
+                    Reset Password
+                </a><br>
+                <span tal:condition="request.user.permission == 'lead_scout'">
+                     <div id="actions_content">
+                        <a href="${request.route_url('add_robot')}" class="scouting">
+                            Add Robot
+                        </a><br>
+                        <a href="${request.route_url('add_match')}" class="scouting">
+                            Add Match
+                        </a><br>
+                        <a href="${request.route_url('manage_all_users')}" class="manage">
+                            Manage Accounts
+                        </a><br>
+                    </div>
+                </span>
+            </span>
+            <span tal:condition="not logged_in">
+                <a href="${request.route_url('login')}" class="manage">
+                    Login
+                </a><br>
+                <a href="${request.route_url('add_user')}" class="manage">
+                    Make an Account
+                </a><br>
+            </span>
+        </nav>
+        <div id="content">
+            <h1>Match ${original_number}</h1>
+            ${message}<br>
+            <form action="${request.route_url('edit_match')}" method="post">
+                <label for="number">Number:</label><br>
+                <input type="number" min="1" name="number" id="number" required tal:attributes="value match.number" pattern="\d+"><br>
+
+                <label for="r_1">Robots:</label><br>
+                <label for="r_1">Red:</label><br>
+                <input type="number" min="1" name="r_1" id="r_1" pattern="\d+" tal:attributes="value match.r_1" required><br>
+                <input type="number" min="1" name="r_2" id="r_2" pattern="\d+" tal:attributes="value match.r_2" required><br>
+                <input type="number" min="1" name="r_3" id="r_3" pattern="\d+" tal:attributes="value match.r_3" required><br>
+
+                <label for="b_1">Blue:</label><br>
+                <input type="number" min="1" name="b_1" id="b_1" pattern="\d+" tal:attributes="value match.b_1" required><br>
+                <input type="number" min="1" name="b_2" id="b_2" pattern="\d+" tal:attributes="value match.b_2" required><br>
+                <input type="number" min="1" name="b_3" id="b_3" pattern="\d+" tal:attributes="value match.b_3" required><br>
+
+                <h1>Points:</h1><br>
+                <label for="r_disc">Red Disc:</label><br>
+                <input type="number" name="r_disc" id="r_disc" pattern="\d+" tal:attributes="value match.r_disc" min="0"><br>
+                <label for="r_climb">Red Climb:</label><br>
+                <input type="number" name="r_climb" id="r_climb" pattern="\d+" tal:attributes="value match.r_climb" min="0"><br>
+                <label for="r_foul">Red Foul:</label><br>
+                <input type="number" name="r_foul" id="r_foul" pattern="\d+" tal:attributes="value match.r_foul" min="0"><br>
+                <label for="r_total">Red Total:</label><br>
+                <input type="number" name="r_total" id="r_total" pattern="\d+" tal:attributes="value match.r_total" min="0"><br>
+
+                <label for="b_disc">Blue Disc:</label><br>
+                <input type="number" name="b_disc" id="b_disc" pattern="\d+" tal:attributes="value match.b_disc" min="0"><br>
+                <label for="b_climb">Blue Climb:</label><br>
+                <input type="number" name="b_climb" id="b_climb" pattern="\d+" tal:attributes="value match.b_climb" min="0"><br>
+                <label for="b_foul">Blue Foul:</label><br>
+                <input type="number" name="b_foul" id="b_foul" pattern="\d+" tal:attributes="value match.b_foul" min="0"><br>
+                <label for="b_total">Blue Total:</label><br>
+                <input type="number" name="b_total" id="b_total" pattern="\d+" tal:attributes="value match.b_total" min="0"><br>
+
+                <input type="checkbox" name="are_scores_entered" id="are_scores_entered" tal:attributes="checked match.are_scores_entered">
+                <label for="are_scores_entered">Scores Entered</label><br>
+
+                <label for="scout">Scout:</label>
+                <input type="text" name="scout" id="scout" tal:attributes="value match.scout"><br>
+
+                <input type="hidden" name="original_number" value="${original_number}">
+                <input type="submit" name="form.submitted" value="Save">
+            </form>
+        </div>
+</body>

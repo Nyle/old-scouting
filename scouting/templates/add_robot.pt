@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Robot</title>
+    <link rel="stylesheet" href="${request.static_url('scouting:static/scouting.css')}?31"
+        type="text/css" media="screen" charset="utf-8">
+</head>
+<body>
+    <div id="page">
+        <header>
+            <div id="location">
+                <a href="${request.route_url('view_home')}" class="nav">Home</a> > <a class="nav">Add Robot</a>
+            </div>
+            <div id="greeting">
+                <span tal:condition="logged_in">
+                    Welcome, ${request.user.name} the
+                    <span tal:switch="request.user.permission">
+                        <span tal:case="'lead_scout'">lead scout</span>
+                        <span tal:case="'scout'">scout</span>
+                        <span tal:case="'unapproved'">unapproved</span>
+                    </span>
+                </span>
+            </div>
+        </header>
+        <nav>
+            <div class="title">
+                <h1>Actions</h1>
+            </div>
+            <span tal:condition="logged_in">
+                <a href="${request.route_url('logout')}" class="manage">
+                    Logout
+                </a><br>
+                <a href="${request.route_url('reset_password')}" class="manage">
+                    Reset Password
+                </a><br>
+                <span tal:condition="request.user.permission == 'lead_scout'">
+                     <div id="actions_content">
+                        <a class="scouting">
+                            Add Robot
+                        </a><br>
+                        <a href="${request.route_url('add_match')}" class="scouting">
+                            Add Match
+                        </a><br>
+                        <a href="${request.route_url('manage_all_users')}" class="manage">
+                            Manage Accounts
+                        </a><br>
+                    </div>
+                </span>
+            </span>
+            <span tal:condition="not logged_in">
+                <a href="${request.route_url('login')}" class="manage">
+                    Login
+                </a><br>
+                <a href="${request.route_url('add_user')}" class="manage">
+                    Make an Account
+                </a><br>
+            </span>
+        </nav>
+        <div id="content">
+            <h1>Add Robot</h1>
+            ${message}<br>
+            <form action="${request.route_url('add_robot')}"
+                  method="post">
+                <label for="number">Number:</label><br>
+                <input type="number" name="number" id="number" required min="1" tal:attributes="value robot.number" pattern="\d+"><br>
+
+                <label for="wheels">Wheels:</label><br>
+                <textarea tal:content="robot.wheels" name="wheels" rows="2" cols="50" id="wheels"><br>
+                <label for="gearbox">Gearbox:</label><br>
+                <textarea tal:content="robot.gearbox" name="gearbox" rows="2" cols="50" id="gearbox"><br>
+                <label for="drive_motors">Drive Motors:</label><br>
+                <textarea tal:content="robot.drive_motors" name="drive_motors" rows="2" cols="50" id="drive_motors"><br>
+                <label for="description">Description/Notes:</label><br>
+                <textarea tal:content="robot.description" name="description" rows="2" cols="50" id="description"><br>
+
+                <input type="checkbox" tal:attributes="checked robot.shooter" name="shooter" id="shooter">
+                <label for="shooter">Shooter/Dumper</label><br>
+                <input type="checkbox" tal:attributes="checked robot.climb" name="climb" id="climb">
+                <label for="climb">Climb</label><br>
+                <input type="checkbox" tal:attributes="checked robot.human_loading" name="human_loading" id="human_loading">
+                <label for="human_loading">Human Loading</label><br>
+                <input type="checkbox" tal:attributes="checked robot.ground_loading" name="ground_loading" id="ground_loading">
+                <label for="ground_loading">Ground Loading</label><br>
+
+                <input type="hidden" name="scout" value="${request.user.name}">
+                <input type="submit" name="form.submitted" value="Save">
+            </form>
+        </div>
+</body>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Accounts ${user.name}</title>
+    <link rel="stylesheet" href="${request.static_url('scouting:static/scouting.css')}?31"
+        type="text/css" media="screen" charset="utf-8">
+</head>
+<body>
+    <div id="page">
+        <header>
+            <div id="location">
+                <a href="${request.route_url('view_home')}" class="nav">Home</a> > <a href="${request.route_url('manage_all_users')}" class="nav">Manage Accounts</a> > <a class="nav">${user.name}</a>
+            </div>
+            <div id="greeting">
+                <span tal:condition="logged_in">
+                    Welcome, ${request.user.name} the
+                    <span tal:switch="request.user.permission">
+                        <span tal:case="'lead_scout'">lead scout</span>
+                        <span tal:case="'scout'">scout</span>
+                        <span tal:case="'unapproved'">unapproved</span>
+                    </span>
+                </span>
+            </div>
+        </header>
+        <nav>
+            <div class="title">
+                <h1>Actions</h1>
+            </div>
+            <span tal:condition="logged_in">
+                <a href="${request.route_url('logout')}" class="manage">
+                    Logout
+                </a><br>
+                <a href="${request.route_url('reset_password')}" class="manage">
+                    Reset Password
+                </a><br>
+                <span tal:condition="request.user.permission == 'lead_scout'">
+                     <div id="actions_content">
+                        <a href="${request.route_url('add_robot')}" class="scouting">
+                            Add Robot
+                        </a><br>
+                        <a href="${request.route_url('add_match')}" class="scouting">
+                            Add Match
+                        </a><br>
+                    </div>
+                </span>
+            </span>
+            <span tal:condition="not logged_in">
+                <a href="${request.route_url('login')}" class="manage">
+                    Login
+                </a><br>
+                <a href="${request.route_url('add_user')}" class="manage">
+                    Make an Account
+                </a><br>
+            </span>
+        </nav>
+        <div id="content">
+            <h1>${user.name}</h1>
+            <form action="${request.route_url('manage_user', user=user.name)}"
+                  method="post">
+
+                <label for="permission">Permission:</label><br>
+                <select id="permission" name="permission">
+                    <option tal:attributes="selected user.permission=='unapproved'" value="unapproved">unapproved</option>
+                    <option tal:attributes="selected user.permission=='scout'" value="scout">scout</option>
+                    <option tal:attributes="selected user.permission=='lead_scout'" value="lead_scout">lead scout</option>
+                 </select><br>
+
+                <input type="checkbox" name="reset_password" id="reset_password">
+                <label for="reset_password">Reset Password</label><br><br>
+
+                <imput type="hidden" name="name" value="user.name">
+                <input type="submit" name="form.submitted" value="Update">
+            </form>
+        </div>
+</body>

@@ -1,0 +1,182 @@
+/******** everywhere ********/
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #58595B
+    }
+
+.nav {
+    color: #00AEEF;
+    text-decoration: none;
+    }
+
+.title {
+    text-align: center;
+    }
+
+.table {
+    width: 100%;
+    overflow-y: scroll;
+    height: 500px;
+    }
+
+table th, table th {
+    padding: 1px;
+    }
+
+table a, table span {
+    display: block;
+    }
+
+table span, table a, table th, table td {
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    }
+
+.red {
+    background-color: #BE1E2D;
+    }
+
+.blue {
+    background-color: #2B3990;
+    }
+
+.grey {
+    background-color: #58595B;
+    }
+
+.unscored {
+    background-color: #FF9900;
+    }
+
+th.unfinished, td.unfinished, .unfinished a, .unfinished span    {
+    color: #FF9900;
+    }
+
+html{
+        background-color: #F5F5F5;
+    }
+
+/******** page ********/
+#page {
+    width: 800px;
+    height: 500px;
+    margin: 0 auto;
+    }
+
+/******** header ********/
+header {
+    height: 30px;
+    padding: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    }
+
+#location {
+    float: left;
+    text-align: left;
+    }
+
+#greeting {
+    float: right;
+    text-align: right;
+    }
+
+/******** nav ********/
+nav {
+    padding: 5px;
+    width: 150px;
+    float: left;
+    text-align: center;
+    }
+
+nav a {
+    width: 100%;
+    height: 20px;
+    display: block;
+
+    line-height: 20px;
+
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    }
+
+nav a.manage {
+    background-color: #00A651;
+    }
+
+nav a.scouting {
+    background-color: #F26522;
+    }
+
+/******** content ********/
+#content {
+    width: 630px;
+    float: right;
+    padding: 5px;
+    }
+
+/******** matches ********/
+#matches {
+    width: 470px;
+    float: left;
+    padding: 2.5px;
+    }
+
+#matches table {
+    width: 100%;
+    }
+
+#matches a {
+    height: 20px;
+    }
+
+/******** robots ********/
+div#robots {
+    width: 150px;
+    padding: 2.5px;
+    float: right;
+    }
+
+#robots table {
+    width: 100%;
+    }
+
+table#robots span {
+    height: 50px;
+    font-size: 30px;
+    line-height: 50px;
+    }
+
+/******** view match ********/
+table#match_teams, table#match_points {
+    width: 200px;
+    }
+
+/******** view robot ********/
+ul#tabs li {
+    display: table-cell;
+    }
+ul#tabs {
+    list-style-type: none;
+    }
+
+ul#tabs a {
+    margin: 2px;
+    padding: 3px;
+    display: block;
+    width: 40px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    background-color: #E0E0E0;
+    }
+
+div#tabCtrl {
+    padding: 10px;
+    }

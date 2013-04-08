@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Robot - ${robot.number}</title>
+    <link rel="stylesheet" href="${request.static_url('scouting:static/scouting.css')}?43"
+        type="text/css" media="screen" charset="utf-8">
+    <script type="text/javascript">
+      function activateTab(pageId) {
+          var tabCtrl = document.getElementById('tabCtrl');
+          var pageToActivate = document.getElementById(pageId);
+          for (var i = 0; i < tabCtrl.childNodes.length; i++) {
+              var node = tabCtrl.childNodes[i];
+              if (node.nodeType == 1) { /* Element */
+                  node.style.display = (node == pageToActivate) ? 'block' : 'none';
+              }
+          }
+      }
+    </script>
+</head>
+<body>
+    <div id="page">
+        <header>
+            <div id="location">
+                <a href="${request.route_url('view_home')}" class="nav">Home</a> > <a class="nav">View Robot - ${robot.number}</a>
+            </div>
+            <div id="greeting">
+                <span tal:condition="logged_in">
+                    Welcome, ${request.user.name} the
+                    <span tal:switch="request.user.permission">
+                        <span tal:case="'lead_scout'">lead scout</span>
+                        <span tal:case="'scout'">scout</span>
+                        <span tal:case="'unapproved'">unapproved</span>
+                    </span>
+                </span>
+            </div>
+        </header>
+        <nav>
+            <div class="title">
+                <h1>Actions</h1>
+            </div>
+            <span tal:condition="logged_in">
+                <a href="${request.route_url('logout')}" class="manage">
+                    Logout
+                </a><br>
+                <a href="${request.route_url('reset_password')}" class="manage">
+                    Reset Password
+                </a><br>
+                <span tal:condition="request.user.permission == 'lead_scout'">
+                     <div id="actions_content">
+                        <a href="${request.route_url('add_robot')}" class="scouting">
+                            Add Robot
+                        </a><br>
+                        <a href="${request.route_url('add_match')}" class="scouting">
+                            Add Match
+                        </a><br>
+                        <a href="${request.route_url('manage_all_users')}" class="manage">
+                            Manage Accounts
+                        </a><br>
+                    </div>
+                </span>
+            </span>
+            <span tal:condition="not logged_in">
+                <a href="${request.route_url('login')}" class="manage">
+                    Login
+                </a><br>
+                <a href="${request.route_url('add_user')}" class="manage">
+                    Make an Account
+                </a><br>
+            </span>
+        </nav>
+        <div id="content">
+            <h1>Robot ${robot.number}</h1>
+            <ul id="tabs">
+                <li><a href="javascript:activateTab('pit_scouting')">Pits</a></li>
+                <li tal:repeat="robot_match sorted(robot_matches)">
+                    <a href="javascript:activateTab('match_${robot_match.match_number}')">${robot_match.match_number}</a>
+                </li>
+            </ul>
+            <div id="tabCtrl">
+                <div id="pit_scouting" style="display: block;">
+                    <h1>Pit Scouting</h1>
+                    <h3>Wheels:</h3>
+                    ${robot.wheels}<br>
+
+                    <h3>Gearbox:</h3>
+                    ${robot.gearbox}<br>
+
+                    <h3>Drive Motors:</h3>
+                    ${robot.drive_motors}<br>
+
+                    <h3>Description/Notes:</h3>
+                    ${robot.description}<br>
+
+                    <h3>This robot can:</h3>
+                    <span tal:condition="robot.shooter">shoot<br></span>
+                    <span tal:condition="robot.climb">climb<br></span>
+                    <span tal:condition="robot.human_loading">human load<br></span>
+                    <span tal:condition="robot.ground_loading">ground load<br></span>
+                    <br>
+                    <span tal:condition="logged_in and request.user.permission == 'lead_scout' and robot.is_scouted">
+                        <h3>Scout:</h3>
+                        ${robot.scout}
+                    </span>
+                    <span tal:condition="logged_in and request.user.permission == 'lead_scout'">
+                        <form action="${request.route_url('edit_robot')}"
+                              method="post">
+                            <input type="hidden" name="original_number" value="${robot.number}">
+                            <input type="submit" name="edit_form.submitted" value="Edit">
+                        </form>
+                    </span>
+                </div>
+                <div tal:repeat="robot_match sorted(robot_matches)" id="match_${robot_match.match_number}" style="display: none;">
+                    <h1><a href="${request.route_url('view_match', number=robot_match.match_number)}" class="nav">Match ${robot_match.match_number}</a></h1>
+                    <div class="general">
+                        <h2>General</h2>
+                        <h3>Estimated Top Speed:</h3>
+                        ${robot_match.speed}<br>
+                        <h3>Stability:</h3>
+                        ${robot_match.stability}<br>
+                        <h3>Occurrences:</h3>
+                        ${robot_match.occurrences}<br>
+                    </div>
+                    <div class="shooter" tal:condition="robot.shooter">
+                        <h2>Shooter</h2>
+                        <table>
+                            <tr>
+                                <th class="grey">Shots</th>
+                                <th class="grey">Auto</th>
+                                <th class="grey">Teleop</th>
+                            </tr>
+                            <tr>
+                                <th class="grey">High</th>
+                                <td class="grey">${robot_match.auto_3}</td>
+                                <td class="grey">${robot_match.teleop_3}</td>
+                            </tr>
+                            <tr>
+                                <th class="grey">Medium</th>
+                                <td class="grey">${robot_match.auto_2}</td>
+                                <td class="grey">${robot_match.teleop_2}</td>
+                            </tr>
+                            <tr>
+                                <th class="grey">Low</th>
+                                <td class="grey">${robot_match.auto_1}</td>
+                                <td class="grey">${robot_match.teleop_1}</td>
+                            </tr>
+                            <tr>
+                                <th class="grey">Missed</th>
+                                <td class="grey">${robot_match.auto_miss}</td>
+                                <td class="grey">${robot_match.teleop_miss}</td>
+                            </tr>
+                            <tr>
+                                <th class="grey">Pyramid</th>
+                                <td class="grey"></td>
+                                <td class="grey">${robot_match.teleop_5}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="climb" tal:condition="robot.climb">
+                        <h2>Climb</h2>
+                        <span tal:condition="not robot_match.attempted_climb">
+                            Didn't climb<br>
+                        </span>
+                        <span tal:condition="robot_match.attempted_climb">
+                            <h3>Level Reached</h3>
+                            ${robot_match.level_reached}<br>
+                            <h3>Time spent climbing</h3>
+                            ${robot_match.time_at_start - robot_match.time_at_end}<br>
+                            <h3>Time left at start of climb</h3>
+                            ${robot_match.time_at_start}<br>
+                            <h3>Time left at end of climb</h3>
+                            ${robot_match.time_at_end}<br>
+                            <h3>Frisbees Dumped</h3>
+                            ${robot_match.frisbees_dumped}<br>
+                        </span>
+                    </div>
+                    <div class="human_loading" tal:condition="robot.human_loading">
+                        <h2>Human Loading</h2>
+                        <h3>Successfully Loaded</h3>
+                        ${robot_match.human_loaded}<br>
+                        <h3>Failed attempts</h3>
+                        ${robot_match.human_missed}<br>
+                    </div>
+                    <div class="ground_loading" tal:condition="robot.ground_loading">
+                        <h2>Ground Pickup</h2>
+                        <h3>Successfully Loaded</h3>
+                        ${robot_match.auto_loaded}<br>
+                        <h3>Failed attempts</h3>
+                        ${robot_match.teleop_loaded}<br>
+                    </div>
+                    <span tal:condition="logged_in and request.user.permission == 'lead_scout' and robot_match.is_scouted">
+                        <h3>Scout:</h3>
+                        ${robot_match.scout}
+                    </span>
+                    <span tal:condition="logged_in and request.user.permission == 'lead_scout'">
+                        <form action="${request.route_url('edit_robot_match', robot_number=robot_match.robot_number, match_number=robot_match.match_number)}"
+                              method="post">
+                            <input type="submit" name="form.submitted" value="Edit">
+                        </form>
+                    </span>
+                </div>
+            </div>
+        </div>
+</body>

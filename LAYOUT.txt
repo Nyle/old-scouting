@@ -1,0 +1,10 @@
+Home:
+    All matches:
+        Number (link to match data)
+        scores (link to match data)
+        robots (link to team page)
+    All robots:
+        Link to Team page
+Robot page:
+    Info about Robot
+

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="${request.static_url('scouting:static/scouting.css')}?45"
+        type="text/css" media="screen" charset="utf-8">
+</head>
+<body>
+    <div id="page">
+        <header>
+            <div id="location">
+                <a class="nav">Home</a>
+            </div>
+            <div id="greeting">
+                <span tal:condition="logged_in">
+                    Welcome, ${request.user.name} the
+                    <span tal:switch="request.user.permission">
+                        <span tal:case="'lead_scout'">lead scout</span>
+                        <span tal:case="'scout'">scout</span>
+                        <span tal:case="'unapproved'">unapproved</span>
+                    </span><br>
+                    Your Password is ${request.user.password}
+                </span>
+            </div>
+        </header>
+        <nav>
+            <div class="title">
+                <h1>Actions</h1>
+            </div>
+            <span tal:condition="logged_in">
+                <a href="${request.route_url('logout')}" class="manage">
+                    Logout
+                </a><br>
+                <a href="${request.route_url('reset_password')}" class="manage">
+                    Reset Password
+                </a><br>
+                <span tal:condition="request.user.permission == 'lead_scout'">
+                     <div id="actions_content">
+                        <a href="${request.route_url('add_robot')}" class="scouting">
+                            Add Robot
+                        </a><br>
+                        <a href="${request.route_url('add_match')}" class="scouting">
+                            Add Match
+                        </a><br>
+                        <a href="${request.route_url('manage_all_users')}" class="manage">
+                            Manage Accounts
+                        </a><br>
+                    </div>
+                </span>
+            </span>
+            <span tal:condition="not logged_in">
+                <a href="${request.route_url('login')}" class="manage">
+                    Login
+                </a><br>
+                <a href="${request.route_url('add_user')}" class="manage">
+                    Make an Account
+                </a><br>
+            </span>
+        </nav>
+        <div id="content">
+            <div id="matches">
+                <div class="title">
+                    <h1>Matches</h1>
+                </div>
+                <div class="table">
+                    <table id="matches">
+                        <thead>
+                            <th colspan="1" class="grey">Match</th>
+                            <th colspan="3" class="red">Red Alliance</th>
+                            <th colspan="3" class="blue">Blue Alliance</th>
+                            <th colspan="2" class="grey">Score</th>
+                        </thead>
+                        <tbody>
+                            <tr tal:repeat="match sorted(matches)">
+                                <td class="grey">
+                                    <a href="${request.route_url('view_match', number=match.number)}">
+                                        ${match.number}
+                                    </a>
+                                </td>
+                                <td tal:repeat="number [match.r_1, match.r_2, match.r_3]">
+                                    <span tal:define="is_scouted robot_matches.filter_by(match_number=match.number).filter_by(robot_number=number).first().is_scouted"
+                                        tal:attributes="class 'red' if is_scouted else 'red unfinished'"
+                                        tal:switch="logged_in != None and (not is_scouted)">
+                                        <a tal:case="True" href="${request.route_url('add_robot_match_data', match_number=match.number, robot_number=number)}">
+                                            ${number}
+                                        </a>
+                                        <a tal:case="False" href="${request.route_url('view_robot', number=number)}">
+                                            ${number}
+                                        </a>
+                                    </span>
+                                </td>
+                                <td tal:repeat="number [match.b_1, match.b_2, match.b_3]">
+                                    <span tal:define="is_scouted robot_matches.filter_by(match_number=match.number).filter_by(robot_number=number).first().is_scouted"
+                                        tal:attributes="class 'blue' if is_scouted else 'blue unfinished'"
+                                        tal:switch="logged_in != None and (not is_scouted)">
+                                        <a tal:case="True" href="${request.route_url('add_robot_match_data', match_number=match.number, robot_number=number)}">
+                                            ${number}
+                                        </a>
+                                        <a tal:case="False" href="${request.route_url('view_robot', number=number)}">
+                                            ${number}
+                                        </a>
+                                    </span>
+                                </td>
+                                <td tal:attributes="class 'red' if match.are_scores_entered else 'unscored'"
+                                    tal:switch="logged_in and request.user.permission != 'unapproved' and not match.are_scores_entered">
+                                    <a tal:case="True" href="${request.route_url('add_match_scores',number=match.number)}"></a>
+                                    <a tal:case="False" href="${request.route_url('view_match', number=match.number)}">
+                                        ${match.r_total}
+                                    </a>
+                                </td>
+                                <td tal:attributes="class 'blue' if match.are_scores_entered else 'unscored'"
+                                    tal:switch="logged_in and request.user.permission != 'unapproved' and not match.are_scores_entered">
+                                    <a tal:case="True" href="${request.route_url('add_match_scores',number=match.number)}"></a>
+                                    <a tal:case="False" href="${request.route_url('view_match', number=match.number)}">
+                                        ${match.r_total}
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="robots">
+                <div class="title">
+                    <h1>Robots</h1>
+                </div>
+                <div class="table">
+                    <table id="robots">
+                        <tr tal:repeat="robot sorted(robots)">
+                            <td tal:attributes="class 'grey' if robot.is_scouted else 'grey unfinished'">
+                                <a href="${request.route_url('view_robot', number=robot.number)}">
+                                    <span tal:content="robot.number">Number</span>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+</body>

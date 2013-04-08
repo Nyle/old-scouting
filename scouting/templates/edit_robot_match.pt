@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Robot Match</title>
+    <link rel="stylesheet" href="${request.static_url('scouting:static/scouting.css')}?31"
+        type="text/css" media="screen" charset="utf-8">
+</head>
+<body>
+    <div id="page">
+        <header>
+            <div id="location">
+                <a href="${request.route_url('view_home')}" class="nav">Home</a> > <a class="nav">Edit Robot Match</a>
+            </div>
+            <div id="greeting">
+                <span tal:condition="logged_in">
+                    Welcome, ${request.user.name} the
+                    <span tal:switch="request.user.permission">
+                        <span tal:case="'lead_scout'">lead scout</span>
+                        <span tal:case="'scout'">scout</span>
+                        <span tal:case="'unapproved'">unapproved</span>
+                    </span>
+                </span>
+            </div>
+        </header>
+        <nav>
+            <div class="title">
+                <h1>Actions</h1>
+            </div>
+            <span tal:condition="logged_in">
+                <a href="${request.route_url('logout')}" class="manage">
+                    Logout
+                </a><br>
+                <a href="${request.route_url('reset_password')}" class="manage">
+                    Reset Password
+                </a><br>
+                <span tal:condition="request.user.permission == 'lead_scout'">
+                     <div id="actions_content">
+                        <a href="${request.route_url('add_robot')}" class="scouting">
+                            Add Robot
+                        </a><br>
+                        <a href="${request.route_url('add_match')}" class="scouting">
+                            Add Match
+                        </a><br>
+                        <a href="${request.route_url('manage_all_users')}" class="manage">
+                            Manage Accounts
+                        </a><br>
+                    </div>
+                </span>
+            </span>
+            <span tal:condition="not logged_in">
+                <a href="${request.route_url('login')}" class="manage">
+                    Login
+                </a><br>
+                <a href="${request.route_url('add_user')}" class="manage">
+                    Make an Account
+                </a><br>
+            </span>
+        </nav>
+        <div id="content">
+            <h1>Match ${robot_match.match_number} - ${robot_match.robot_number}</h1>
+            <form action="${request.route_url('edit_robot_match', robot_number=robot_match.robot_number, match_number=robot_match.match_number)}" method="post">
+                <div>
+                    <h2>General</h2>
+                    <label for="speed">Estimated Maximum Speed (feet per second)</label><br>
+                    <input type="number" min="0" name="speed" id="speed" required tal:attributes="value robot_match.speed" pattern="\d+"><br><br>
+
+                    <label for="stability">Stability</label><br>
+                    <input type="radio" name="stability" id="low" value="low" tal:attributes="checked robot_match.stability=='low'" required>
+                    <label for="low">Low</label>
+                    <input type="radio" name="stability" id="medium" value="medium" tal:attributes="checked robot_match.stability=='medium'" required>
+                    <label for="medium">Medium</label>
+                    <input type="radio" name="stability" id="high" value="high" tal:attributes="checked robot_match.stability=='high'" required>
+                    <label for="high">High</label><br><br>
+
+                    <label for="occurrences">Notable Occurrences, Notes, Comments, etc.</label><br>
+                    <textarea tal:content="robot_match.occurrences" name="occurrences" rows="2" cols="50" id="occurrences"><br><br>
+                </div>
+                <div class="shooter" tal:condition="robot.shooter">
+                    <h2>Shooter</h2>
+                    <table>
+                        <tr>
+                            <th class="grey">Shots</th>
+                            <th class="grey">Auto</th>
+                            <th class="grey">Teleop</th>
+                        </tr>
+                        <tr>
+                            <th class="grey">High</th>
+                            <td class="grey"><input type="number" min="0" name="auto_3" id="auto_3" required tal:attributes="value robot_match.auto_3" pattern="\d+"></td>
+                            <td class="grey"><input type="number" min="0" name="teleop_3" id="teleop_3" required tal:attributes="value robot_match.teleop_3" pattern="\d+"></td>
+                        </tr>
+                        <tr>
+                            <th class="grey">Medium</th>
+                            <td class="grey"><input type="number" min="0" name="auto_2" id="auto_2" required tal:attributes="value robot_match.auto_2" pattern="\d+"></td>
+                            <td class="grey"><input type="number" min="0" name="teleop_2" id="teleop_2" required tal:attributes="value robot_match.teleop_2" pattern="\d+"></td>
+                        </tr>
+                        <tr>
+                            <th class="grey">Low</th>
+                            <td class="grey"><input type="number" min="0" name="auto_1" id="auto_1" required tal:attributes="value robot_match.auto_1" pattern="\d+"></td>
+                            <td class="grey"><input type="number" min="0" name="teleop_1" id="teleop_1" required tal:attributes="value robot_match.teleop_1" pattern="\d+"></td>
+                        </tr>
+                        <tr>
+                            <th class="grey">Missed</th>
+                            <td class="grey"><input type="number" min="0" name="auto_miss" id="auto_miss" required tal:attributes="value robot_match.auto_miss" pattern="\d+"></td>
+                            <td class="grey"><input type="number" min="0" name="teleop_miss" id="teleop_miss" required tal:attributes="value robot_match.teleop_miss" pattern="\d+"></td>
+                        </tr>
+                        <tr>
+                            <th class="grey">Pyramid</th>
+                            <td class="grey"></td>
+                            <td class="grey"><input type="number" min="0" name="teleop_5" id="teleop_5" required tal:attributes="value robot_match.teleop_5" pattern="\d+"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="climb" tal:condition="robot.climb">
+                    <h2>Climb</h2>
+                    <input type="checkbox" name="attempted_climb" id="attempted_climb" tal:attributes="checked robot_match.attempted_climb">
+                    <label for="attempted_climb">Attempted Climb (If this is not checked, the rest of this section will be ignored)</label><br><br>
+
+                    <label for="level_reached">Level Reached</label><br>
+                    <input type="radio" name="level_reached" id="0" value="0" tal:attributes="checked robot_match.level_reached=='0'">
+                    <label for="0">0</label>
+                    <input type="radio" name="level_reached" id="10" value="10" tal:attributes="checked robot_match.level_reached=='10'">
+                    <label for="10">10</label>
+                    <input type="radio" name="level_reached" id="20" value="20" tal:attributes="checked robot_match.level_reached=='20'">
+                    <label for="20">20</label>
+                    <input type="radio" name="level_reached" id="30" value="30" tal:attributes="checked robot_match.level_reached=='30'">
+                    <label for="30">30</label><br><br>
+
+                    <label for="time_at_start">Time Left at Start of Climb</label>
+                    <input type="number" min="0" name="time_at_start" id="time_at_start" tal:attributes="value robot_match.time_at_start" pattern="\d+"><br><br>
+
+                    <label for="time_at_end">Time Left at End of Climb</label>
+                    <input type="number" min="0" name="time_at_end" id="time_at_end" tal:attributes="value robot_match.time_at_end" pattern="\d+"><br><br>
+
+                    <label for="frisbees_dumped">Frisbees Dumped</label>
+                    <input type="number" min="0" max="6" name="frisbees_dumped" id="frisbees_dumped" tal:attributes="value robot_match.frisbees_dumped" pattern="\d+"><br><br>
+                </div>
+                <div class="human_loading" tal:condition="robot.human_loading">
+                    <h2>Human Loading</h2>
+                    <label for="human_loaded">Frisbees Successfully Human Loaded</label>
+                    <input type="number" min="0" name="human_loaded" id="human_loaded" required tal:attributes="value robot_match.human_loaded" pattern="\d+"><br><br>
+
+                    <label for="human_missed">Failed Human Loading Attempts</label>
+                    <input type="number" min="0" name="human_missed" id="human_missed" required tal:attributes="value robot_match.human_missed" pattern="\d+"><br><br>
+                </div>
+                <div class="ground_loading" tal:condition="robot.ground_loading">
+                    <h2>Ground Pickup</h2>
+                    <label for="auto_loaded">Frisbees Ground Loaded In Auto</label>
+                    <input type="number" min="0" name="auto_loaded" id="auto_loaded" required tal:attributes="value robot_match.auto_loaded" pattern="\d+"><br><br>
+
+                    <label for="teleop_loaded">Frisbees Ground Loaded In Teleop</label>
+                    <input type="number" min="0" name="teleop_loaded" id="teleop_loaded" required tal:attributes="value robot_match.teleop_loaded" pattern="\d+"><br><br>
+                </div>
+
+                <input type="checkbox" tal:attributes="checked robot_match.is_scouted" name="is_scouted" id="is_scouted">
+                <label for="is_scouted">Has Been Scouted</label><br>
+
+                <label for="scout">Scout</label><br>
+                <input type="text" name="scout" value="${robot_match.scout}"><br>
+                <input type="submit" name="form.submitted" value="Save">
+            </form>
+        </div>
+</body>
+
